@@ -1,23 +1,20 @@
-export type Message =
-  | { success: string }
-  | { error: string }
-  | { message: string };
-
-export function FormMessage({ message }: { message: Message }) {
+export function FormMessage({ message }: { message: URLSearchParams }) {
   return (
     <div className="flex flex-col gap-2 w-full text-sm">
-      {"success" in message && (
-        <div className="text-foreground border-l-2 border-foreground px-4">
-          {message.success}
+      {message.has("success") && (
+        <div className="text-foreground border-l-2 border-foreground my-2 px-4">
+          {message.get("success")}
         </div>
       )}
-      {"error" in message && (
-        <div className="text-destructive-foreground border-l-2 border-destructive-foreground px-4">
-          {message.error}
+      {message.has("error") && (
+        <div className="text-destructive border-l-2 border-destructive my-2 px-4">
+          {message.get("error")}
         </div>
       )}
-      {"message" in message && (
-        <div className="text-foreground border-l-2 px-4">{message.message}</div>
+      {message.has("message") && (
+        <div className="text-foreground border-l-2 px-4 my-2">
+          {message.get("message")}
+        </div>
       )}
     </div>
   );

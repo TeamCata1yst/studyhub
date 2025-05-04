@@ -1,5 +1,6 @@
+"use client";
 import { resetPasswordAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
+import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,15 +8,14 @@ import { GraduationCap } from "lucide-react";
 
 import { Albert_Sans } from "next/font/google";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 const albert = Albert_Sans({ subsets: ["latin"] });
 
-export default async function ResetPassword(props: {
-  searchParams: Promise<Message>;
-}) {
-  const searchParams = await props.searchParams;
+export default function ResetPassword() {
+  const searchParams = useSearchParams();
   return (
     <main className="flex items-center lg:justify-normal justify-center min-h-screen">
-      <div className="absolute hidden md:block bottom-0 right-0 bg-[url('/loginBg.svg')] h-screen w-screen bg-right-bottom -z-10 bg-no-repeat"></div>
+      <div className="absolute hidden md:block bottom-0 right-0 bg-[url('/loginBg.svg')] h-screen w-screen bg-right-bottom bg-no-repeat"></div>
       <div className="bg-white rounded-md p-8 lg:ml-32 space-y-4 text-center w-[33rem] z-20">
         <GraduationCap className="h-14 w-14 text-study-orange mx-auto" />
         <h1 className={"text-4xl font-semibold " + albert.className}>

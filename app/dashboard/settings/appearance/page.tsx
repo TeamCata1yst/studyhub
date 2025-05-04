@@ -5,33 +5,33 @@ export default async function ProfilePage() {
     <>
       <nav className="flex flex-col gap-2 w-1/6">
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
           href="/dashboard/settings/"
         >
           Profile
         </Link>
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
           href="/dashboard/settings/account"
         >
           Account
         </Link>
         <Link
           className="text-sm rounded-md py-2 px-4 bg-accent font-medium"
-          href="/dashboard/settings/security"
+          href="/dashboard/settings/appearance"
         >
-          Security
+          Appearance
         </Link>
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
           href="/dashboard/settings/other"
         >
           Other
         </Link>
       </nav>
       <div className="space-y-1">
-        <h2 className="font-semibold">Security</h2>
-        <p className="text-sm">Configure your security settings.</p>
+        <h2 className="font-semibold">Appearance</h2>
+        <p className="text-sm">Configure your appearance settings.</p>
       </div>
     </>
   );

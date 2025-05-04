@@ -1,5 +1,6 @@
+"use client";
 import { forgotPasswordAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
+import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,12 +8,11 @@ import Link from "next/link";
 
 import { Albert_Sans } from "next/font/google";
 import { GraduationCap } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 const albert = Albert_Sans({ subsets: ["latin"] });
 
-export default async function ForgotPassword(props: {
-  searchParams: Promise<Message>;
-}) {
-  const searchParams = await props.searchParams;
+export default function ForgotPassword() {
+  const searchParams = useSearchParams();
   return (
     <main className="flex items-center lg:justify-normal justify-center min-h-screen">
       <div className="absolute hidden md:block bottom-0 right-0 bg-[url('/loginBg.svg')] h-screen w-screen bg-right-bottom -z-10 bg-no-repeat"></div>
@@ -24,6 +24,8 @@ export default async function ForgotPassword(props: {
         </h1>
         <p className="text-sm">
           No problem, we&apos;ll send you reset instructions.
+          <br />
+          The link will also work to sign you into the application.
         </p>
         <div className="flex flex-col gap-2">
           <Label htmlFor="email" className="self-start">

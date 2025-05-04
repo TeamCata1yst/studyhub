@@ -145,3 +145,37 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
+
+export const changeEmailAction = async (formData: FormData) => {
+  const supabase = await createClient();
+  const email = formData.get("email") as string;
+  console.log("change", email);
+
+  const user = await supabase.auth.getUser();
+  const curr_email = user.data.user?.email;
+  if (curr_email == email || !email) {
+    encodedRedirect(
+      "error",
+      "/dashboard/settings/account",
+      "Email is same as current email.",
+    );
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    email: email,
+  });
+
+  if (error) {
+    encodedRedirect(
+      "error",
+      "/dashboard/settings/account",
+      "Email update failed",
+    );
+  }
+
+  encodedRedirect(
+    "success",
+    "/dashboard/settings/account",
+    "Email update action started, check inboxes of both current and new email.",
+  );
+};

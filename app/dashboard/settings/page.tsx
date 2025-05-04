@@ -74,8 +74,6 @@ export default function ProfilePage() {
         .from("avatars")
         .upload(fileName, file);
 
-      console.log("Upload result:", data, error);
-
       const {
         data: { publicUrl },
       } = supabase.storage.from("avatars").getPublicUrl(fileName);
@@ -110,13 +108,7 @@ export default function ProfilePage() {
     encodedRedirect("success", "/dashboard/settings", "Profile updated");
   };
 
-  useEffect(() => {
-    console.log(urls);
-  }, [urls]);
-
-  return loading ? (
-    <p>Loading...</p>
-  ) : (
+  return (
     <>
       <nav className="flex md:flex-col gap-2 w-1/6">
         <Link
@@ -126,115 +118,121 @@ export default function ProfilePage() {
           Profile
         </Link>
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
           href="/dashboard/settings/account"
         >
           Account
         </Link>
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
-          href="/dashboard/settings/security"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
+          href="/dashboard/settings/appearance"
         >
-          Security
+          Appearance
         </Link>
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
           href="/dashboard/settings/other"
         >
           Other
         </Link>
       </nav>
-      <div className="md:w-3/6">
-        <h2 className="font-semibold pb-1">Profile</h2>
-        <p className="text-sm">This is how others will see you on the site.</p>
-        <hr className="my-4" />
-        <form className="space-y-6">
-          <div className="flex gap-4">
-            <Avatar className="w-24 h-24 flex-shrink-0">
-              <AvatarImage src={avatar} />
-              <AvatarFallback>
-                {displayName
-                  .toUpperCase()
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-            <div className="space-y-1 w-full">
-              <Label htmlFor="avatar">Avatar</Label>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="md:w-1/2">
+          <h2 className="font-semibold pb-1">Profile</h2>
+          <p className="text-sm">
+            This is how others will see you on the site.
+          </p>
+          <hr className="my-4" />
+          <form className="space-y-6">
+            <div className="flex gap-4">
+              <Avatar className="w-24 h-24 flex-shrink-0">
+                <AvatarImage src={avatar} />
+                <AvatarFallback>
+                  {displayName
+                    .toUpperCase()
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <div className="space-y-1 w-full">
+                <Label htmlFor="avatar">Avatar</Label>
+                <Input
+                  type="file"
+                  id="avatar"
+                  name="avatar"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                />
+                <small className="text-xs">
+                  Your avatar is your profile picture. You can upload a new one
+                  here.
+                </small>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="displayName">Display Name</Label>
               <Input
-                type="file"
-                id="avatar"
-                name="avatar"
-                accept="image/*"
-                onChange={handleAvatarChange}
+                id="displayName"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
               />
               <small className="text-xs">
-                Your avatar is your profile picture. You can upload a new one
-                here.
+                This is your public display name. It can be your real name or a
+                pseudonym.
               </small>
             </div>
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="displayName">Display Name</Label>
-            <Input
-              id="displayName"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-            />
-            <small className="text-xs">
-              This is your public display name. It can be your real name or a
-              pseudonym.
-            </small>
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="Enter your bio here..."
-            />
-            <small className="text-xs">
-              Your bio is a short description of yourself. It can be used to
-              introduce yourself to others.
-            </small>
-          </div>
-          <div className="space-y-1">
-            <Label className="block">URLs</Label>
-            <small className="text-xs block">
-              Add links to your website, blog, or social media profiles.
-            </small>
-            {Array.from(Array(urlCount)).map((u, i) => (
-              <Input
-                value={urls[i] ?? ""}
-                key={i}
-                placeholder="https://www.example.com/"
-                onChange={(e) => {
-                  urls[i] = e.target.value;
-                  setUrls([...urls]);
-                }}
+            <div className="space-y-1">
+              <Label htmlFor="bio">Bio</Label>
+              <Textarea
+                id="bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Enter your bio here..."
               />
-            ))}
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={(e) => {
-                e.preventDefault();
-                setUrlCount(urlCount + 1);
-              }}
+              <small className="text-xs">
+                Your bio is a short description of yourself. It can be used to
+                introduce yourself to others.
+              </small>
+            </div>
+            <div className="space-y-1">
+              <Label className="block">URLs</Label>
+              <small className="text-xs block">
+                Add links to your website, blog, or social media profiles.
+              </small>
+              {Array.from(Array(urlCount)).map((u, i) => (
+                <Input
+                  value={urls[i] ?? ""}
+                  key={i}
+                  placeholder="https://www.example.com/"
+                  onChange={(e) => {
+                    urls[i] = e.target.value;
+                    setUrls([...urls]);
+                  }}
+                />
+              ))}
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setUrlCount(urlCount + 1);
+                }}
+              >
+                <Plus />
+              </Button>
+            </div>
+            <SubmitButton
+              pendingText="Updating..."
+              formAction={profileUpdateAction}
             >
-              <Plus />
-            </Button>
-          </div>
-          <SubmitButton
-            pendingText="Updating..."
-            formAction={profileUpdateAction}
-          >
-            Update Profile
-          </SubmitButton>
-        </form>
-      </div>
+              Update Profile
+            </SubmitButton>
+          </form>
+        </div>
+      )}
     </>
   );
 }

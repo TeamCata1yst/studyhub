@@ -1,5 +1,6 @@
+"use client";
 import { signInAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
+import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -10,9 +11,10 @@ const albert = Albert_Sans({ subsets: ["latin"] });
 
 import GoogleButton from "@/components/google-button";
 import { GraduationCap } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
-export default async function Login(props: { searchParams: Promise<Message> }) {
-  const searchParams = await props.searchParams;
+export default function Login() {
+  const searchParams = useSearchParams();
   return (
     <main className="flex items-center lg:justify-normal justify-center min-h-screen">
       <div className="absolute hidden md:block bottom-0 right-0 bg-[url('/loginBg.svg')] h-screen w-screen bg-right-bottom -z-10 bg-no-repeat"></div>

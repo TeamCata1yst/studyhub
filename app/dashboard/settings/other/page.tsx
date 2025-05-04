@@ -5,22 +5,22 @@ export default async function ProfilePage() {
     <>
       <nav className="flex flex-col gap-2 w-1/6">
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
           href="/dashboard/settings/"
         >
           Profile
         </Link>
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
           href="/dashboard/settings/account"
         >
           Account
         </Link>
         <Link
-          className="text-sm rounded-md py-2 px-4 hover:underline"
-          href="/dashboard/settings/security"
+          className="text-sm rounded-md py-2 px-4 hover:underline underline-offset-4"
+          href="/dashboard/settings/appearance"
         >
-          Security
+          Appearance
         </Link>
         <Link
           className="text-sm rounded-md py-2 px-4 bg-accent font-medium"

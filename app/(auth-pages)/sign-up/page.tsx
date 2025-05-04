@@ -1,5 +1,6 @@
+"use client";
 import { signUpAction } from "@/app/actions";
-import { FormMessage, Message } from "@/components/form-message";
+import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 
 import { Label } from "@/components/ui/label";
@@ -10,13 +11,12 @@ import { Albert_Sans } from "next/font/google";
 import { Button } from "@/components/ui/button";
 import GoogleButton from "@/components/google-button";
 import { GraduationCap } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 const albert = Albert_Sans({ subsets: ["latin"] });
 
-export default async function Signup(props: {
-  searchParams: Promise<Message>;
-}) {
-  const searchParams = await props.searchParams;
-  if ("message" in searchParams) {
+export default function Signup() {
+  const searchParams = useSearchParams();
+  if (searchParams.has("message")) {
     return (
       <div className="w-full flex-1 flex items-center h-screen sm:max-w-md justify-center gap-2 p-4">
         <FormMessage message={searchParams} />
