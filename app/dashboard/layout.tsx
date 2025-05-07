@@ -50,7 +50,7 @@ export default async function DashboardLayout({
             {profileData.interests && children}
           </ScrollArea>
         </div>
-        <Friends />
+        {profileData.interests && <Friends />}
       </FriendsProvider>
     </>
   );

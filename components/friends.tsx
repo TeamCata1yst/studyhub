@@ -4,7 +4,7 @@ const albert = Albert_Sans({ subsets: ["latin"] });
 import React, { useState, useEffect } from "react";
 
 import { Button } from "./ui/button";
-import { Check, Users, X } from "lucide-react";
+import { BookText, Check, ShieldHalf, Users, X } from "lucide-react";
 import {
   acceptFriendRequestAction,
   rejectFriendRequestAction,
@@ -183,7 +183,7 @@ export default function Friends({}: Props) {
         >
           <X />
         </Button>
-        <div className="space-y-2">
+        <div className="space-y-3">
           <h1 className={albert.className + " text-xl font-medium"}>
             Friends ({fs?.length})
           </h1>
@@ -208,10 +208,12 @@ export default function Friends({}: Props) {
                 <p className="font-medium text-sm group-hover:underline underline-offset-4">
                   {friend.full_name || "Unknown"}
                 </p>
-                <small className="text-xs">
-                  {friend.course || "Unknown"} -{" "}
+                <p className="text-xs mt-0.5">
+                  <BookText className="inline mr-1" size={14} />
+                  {friend.course || "Unknown"} <br />
+                  <ShieldHalf className="inline mr-1" size={14} />
                   {friend.university || "Unknown"}
-                </small>
+                </p>
               </div>
             </Link>
           ))}

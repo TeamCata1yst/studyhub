@@ -26,6 +26,7 @@ export default function AccountSettings() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
+  const [o_email, setO_Email] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const searchParams = useSearchParams();
@@ -38,6 +39,7 @@ export default function AccountSettings() {
         const { email } = data.user;
         if (!email) return;
         setEmail(email);
+        setO_Email(email);
       } catch (error) {
         console.error("Failed to fetch user:", error);
       } finally {
@@ -109,9 +111,8 @@ export default function AccountSettings() {
                 type="email"
                 name="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
+                onChange={(e) => setEmail(e.target.value)}
+                onEditCancel={() => setEmail(o_email)}
               />
               <FormMessage message={searchParams} />
               <small className="text-xs pb-3 block">
@@ -141,7 +142,7 @@ export default function AccountSettings() {
                     <DialogHeader>
                       <DialogTitle>Change Password</DialogTitle>
                       <DialogDescription>
-                        Anyone who has this link will be able to view this.
+                        New password should not be same as old password.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
