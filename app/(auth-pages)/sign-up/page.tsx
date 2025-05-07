@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import GoogleButton from "@/components/google-button";
 import { GraduationCap } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import LoginBg from "@/components/login-bg";
 const albert = Albert_Sans({ subsets: ["latin"] });
 
 export default function Signup() {
@@ -26,9 +27,9 @@ export default function Signup() {
 
   return (
     <main className="flex items-center lg:justify-normal justify-center min-h-screen">
-      <div className="absolute hidden md:block bottom-0 right-0 bg-[url('/loginBg.svg')] h-screen w-screen bg-right-bottom -z-10 bg-no-repeat"></div>
+      <LoginBg />
 
-      <div className="bg-white rounded-md p-8 lg:ml-32 space-y-4 text-center w-[50rem] z-20">
+      <div className="bg-background rounded-md border p-8 lg:ml-32 space-y-4 text-center w-[50rem] z-20">
         <GraduationCap className="h-14 w-14 text-study-orange mx-auto" />
         <h1 className={"text-4xl font-semibold " + albert.className}>
           Sign up

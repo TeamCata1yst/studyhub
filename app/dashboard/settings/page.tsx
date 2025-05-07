@@ -11,7 +11,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function ProfilePage() {
+export default function ProfileSettings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <nav className="flex md:flex-col gap-2 w-1/6">
+      <nav className="flex md:flex-col gap-2 md:w-1/6">
         <Link
           className="text-sm rounded-md py-2 px-4 bg-accent font-medium"
           href="/dashboard/settings/"
@@ -225,6 +225,7 @@ export default function ProfilePage() {
               </Button>
             </div>
             <SubmitButton
+              variant="secondary"
               pendingText="Updating..."
               formAction={profileUpdateAction}
             >

@@ -179,3 +179,126 @@ export const changeEmailAction = async (formData: FormData) => {
     "Email update action started, check inboxes of both current and new email.",
   );
 };
+
+export const deleteAccountAction = async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
+
+  const uid = data.user?.id;
+
+  if (error) {
+    encodedRedirect(
+      "error",
+      "/dashboard/settings/account",
+      "Account deletion failed",
+    );
+    return;
+  }
+
+  if (!uid) {
+    encodedRedirect(
+      "error",
+      "/dashboard/settings/account",
+      "User ID not found",
+    );
+    return;
+  }
+
+  try {
+    const { data: files, error: listError } = await supabase.storage
+      .from("avatars")
+      .list(uid);
+    if (files && files.length > 0) {
+      const filePaths = files.map((file) => `${uid}/${file.name}`);
+
+      const { error: deleteFilesError } = await supabase.storage
+        .from("avatars")
+        .remove(filePaths);
+
+      if (deleteFilesError) {
+        console.error("Error deleting avatar files:", deleteFilesError);
+      }
+    }
+  } catch (error) {
+    console.error("Error deleting storage:", error);
+  }
+
+  const { error: deleteError } = await supabase.rpc("delete_user");
+
+  if (deleteError) {
+    console.error("Error deleting user:", deleteError);
+    return;
+  }
+
+  await supabase.auth.signOut();
+
+  redirect("/sign-in");
+};
+
+export const sendFriendRequestAction = async (uid: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.rpc("send_friend_request", {
+    friend_id: uid,
+  });
+
+  if (error) {
+    console.error("Error sending friend request:", error);
+  }
+  return { success: !error && data !== null, requestId: data };
+};
+
+export const acceptFriendRequestAction = async (rid: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.rpc("accept_friend_request", {
+    request_id: rid,
+  });
+
+  if (error) {
+    console.error("Error accepting friend request:", error);
+  }
+  return { success: !error && !!data };
+};
+
+export const rejectFriendRequestAction = async (rid: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.rpc("reject_friend_request", {
+    request_id: rid,
+  });
+
+  if (error) {
+    console.error("Error rejecting friend request:", error);
+  }
+  return { success: !error && !!data };
+};
+
+export const removeFriendAction = async (fid: string) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.rpc("remove_friend", {
+    friend_id: fid,
+  });
+
+  if (error) {
+    console.error("Error removing friend:", error);
+  }
+  return { success: !error && !!data };
+};
+
+export const cancelRequestAction = async (rid: string) => {
+  const supabase = await createClient();
+  console.log(rid);
+
+  const { data, error } = await supabase.rpc("cancel_friend_request", {
+    request_id: rid,
+  });
+
+  console.log(data, error);
+
+  if (error) {
+    console.error("Error canceling friend request:", error);
+  }
+  return { success: !error && !!data };
+};

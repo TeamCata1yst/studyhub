@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import Navbar from "@/components/navbar";
 import Onboarding from "@/components/onboarding";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Friends from "@/components/friends";
+import { FriendsProvider } from "@/hooks/use-friends-updater";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -35,17 +37,21 @@ export default async function DashboardLayout({
     .select("*")
     .eq("id", user.id)
     .single();
+
   return (
     <>
-      <Navbar user={profileData} onboarding={!profileData.interests} />
-      <div
-        className={`${profileData.interests && "md:pl-20 pt-20 md:pt-2"} p-2 h-full`}
-      >
-        <ScrollArea className="p-8 bg-background rounded-md shadow h-full">
-          {!profileData.interests && <Onboarding profile={profileData} />}
-          {profileData.interests && children}
-        </ScrollArea>
-      </div>
+      <FriendsProvider>
+        <Navbar user={profileData} onboarding={!profileData.interests} />
+        <div
+          className={`${profileData.interests && "md:pl-20 pt-20 md:pt-3 xl:pr-64"} p-3 h-full`}
+        >
+          <ScrollArea className="p-8 bg-background border rounded-md h-full">
+            {!profileData.interests && <Onboarding profile={profileData} />}
+            {profileData.interests && children}
+          </ScrollArea>
+        </div>
+        <Friends />
+      </FriendsProvider>
     </>
   );
 }

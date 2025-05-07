@@ -26,7 +26,7 @@ type Props = {
 export default function Navbar({ user, onboarding }: Props) {
   return (
     <nav
-      className={`flex justify-between items-center md:flex-col fixed right-0 md:right-auto top-0 md:bottom-0 p-4 md:py-8 bg-accent transition-all ${onboarding ? "md:-left-20" : "left-0"}`}
+      className={`flex justify-between items-center md:flex-col fixed right-0 md:right-auto top-0 md:bottom-0 p-4 md:py-8 ${onboarding ? "md:-left-20" : "left-0"}`}
     >
       <Link href="/dashboard">
         <Image
@@ -34,14 +34,14 @@ export default function Navbar({ user, onboarding }: Props) {
           alt="StudyHub Logo"
           width={100}
           height={100}
-          className="h-36 w-12 md:block hidden"
+          className="h-36 w-12 md:block hidden dark:invert dark:hue-rotate-180"
         />
         <Image
           src="/logo.svg"
           alt="StudyHub Logo"
           width={100}
           height={100}
-          className="h-12 w-36 md:hidden"
+          className="h-12 w-36 md:hidden dark:invert dark:hue-rotate-180"
         />
       </Link>
       <TooltipProvider>

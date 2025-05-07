@@ -9,15 +9,15 @@ import Link from "next/link";
 import { Albert_Sans } from "next/font/google";
 import { GraduationCap } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import LoginBg from "@/components/login-bg";
 const albert = Albert_Sans({ subsets: ["latin"] });
 
 export default function ForgotPassword() {
   const searchParams = useSearchParams();
   return (
     <main className="flex items-center lg:justify-normal justify-center min-h-screen">
-      <div className="absolute hidden md:block bottom-0 right-0 bg-[url('/loginBg.svg')] h-screen w-screen bg-right-bottom -z-10 bg-no-repeat"></div>
-
-      <form className="bg-white rounded-md p-8 lg:ml-32 space-y-4 text-center w-[33rem] z-20">
+      <LoginBg />
+      <form className="bg-background rounded-md border p-8 lg:ml-32 space-y-4 text-center w-[33rem] z-20">
         <GraduationCap className="h-14 w-14 text-study-orange mx-auto" />
         <h1 className={"text-4xl font-semibold " + albert.className}>
           Forgot password?

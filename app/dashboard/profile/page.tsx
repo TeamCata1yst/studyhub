@@ -2,12 +2,11 @@
 import { createClient } from "@/utils/supabase/client";
 import { AvatarFallback, AvatarImage, Avatar } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
-
 import { useToast } from "@/hooks/use-toast";
 import { Albert_Sans } from "next/font/google";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Instagram, Link2 } from "lucide-react";
+import { Edit, Link2 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 import {
@@ -45,6 +44,7 @@ export default function ProfilePage() {
             setInterests(profileData.interests || []);
             setUrls(profileData.urls || []);
             setId(profileData.id);
+            setFriend_count(profileData.friend_count || 0);
           }
         }
       } catch (error) {
@@ -65,13 +65,14 @@ export default function ProfilePage() {
   const [course, setCourse] = useState("");
   const [uni, setUni] = useState("");
   const [id, setId] = useState("");
+  const [friend_count, setFriend_count] = useState(0);
 
   return loading ? (
     <p>Loading...</p>
   ) : (
     <>
       <div className="flex gap-6">
-        <Avatar className="w-32 h-32 flex-shrink-0">
+        <Avatar className="md:w-32 md:h-32 w-20 h-20 flex-shrink-0">
           <AvatarImage src={avatar} />
           <AvatarFallback>
             {displayName
@@ -130,7 +131,7 @@ export default function ProfilePage() {
             Studying <b>{course}</b> at <b>{uni}</b>
           </p>
           <p className="text-sm">
-            <b>{10}</b> Friends
+            <b>{friend_count}</b> Friends
           </p>
         </div>
       </div>

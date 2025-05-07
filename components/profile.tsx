@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Albert_Sans } from "next/font/google";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { UserPlus } from "lucide-react";
+import { UserCheck, UserCog, UserMinus, UserPlus, UserX } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Tooltip,
@@ -14,6 +14,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import {
+  acceptFriendRequestAction,
+  cancelRequestAction,
+  rejectFriendRequestAction,
+  removeFriendAction,
+  sendFriendRequestAction,
+} from "@/app/actions";
+import { useToast } from "@/hooks/use-toast";
+import { useFriendsUpdater } from "@/hooks/use-friends-updater";
 
 const albert = Albert_Sans({ subsets: ["latin"] });
 
@@ -22,43 +31,94 @@ type Props = {
 };
 
 export default function Profile({ user_id }: Props) {
+  const { triggerRefresh } = useFriendsUpdater();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function fetchUserProfile() {
-      try {
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+  const [friendStatus, setFriendStatus] = useState<string>("");
+  const [requestId, setRequestId] = useState<string | null>(null);
 
-        if (user) {
-          const { data: profileData } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user_id)
-            .maybeSingle();
+  async function fetchUserProfile() {
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-          setDisplayName(profileData.full_name || "");
-          setBio(profileData.bio || "");
-          setAvatar(profileData.avatar_url);
-          setP_avatar(profileData.avatar_url);
-          setCourse(profileData.course);
-          setUni(profileData.university);
-          setInterests(profileData.interests || []);
-          setUrls(profileData.urls || []);
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoading(false);
+      if (user) {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user_id)
+          .maybeSingle();
+
+        setDisplayName(profileData.full_name || "");
+        setBio(profileData.bio || "");
+        setAvatar(profileData.avatar_url);
+        setFriend_count(profileData.friend_count || 0);
+        setCourse(profileData.course);
+        setUni(profileData.university);
+        setInterests(profileData.interests || []);
+        setUrls(profileData.urls || []);
       }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setLoading(false);
     }
+  }
 
+  const fetchFriendStatus = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data: fr, error: friendsError } = await supabase
+      .from("friendships")
+      .select("id, friend_id")
+      .eq("user_id", user.id)
+      .eq("status", "accepted");
+    const { data: o_fr, error: oFriendsError } = await supabase
+      .from("friendships")
+      .select("id, user_id")
+      .eq("friend_id", user.id)
+      .eq("status", "accepted");
+    const { data: w_fr, error: wFriendsError } = await supabase
+      .from("friendships")
+      .select("id, friend_id")
+      .eq("user_id", user.id)
+      .eq("status", "pending");
+    const { data: i_fr, error: iFriendsError } = await supabase
+      .from("friendships")
+      .select("id, user_id")
+      .eq("friend_id", user.id)
+      .eq("status", "pending");
+    // console.log()
+    console.log(fr, o_fr, w_fr, i_fr);
+    if (friendsError || oFriendsError || wFriendsError || iFriendsError) return;
+    if (o_fr.length > 0 || fr.length > 0) {
+      console.log("friend");
+      setFriendStatus("friend");
+    }
+    if (w_fr.length > 0) {
+      console.log("pending");
+      setRequestId(w_fr[0].id);
+      setFriendStatus("pending");
+    }
+    if (i_fr.length > 0) {
+      console.log("incoming");
+      setRequestId(i_fr[0].id);
+      setFriendStatus("incoming");
+    }
+  };
+
+  useEffect(() => {
+    fetchFriendStatus();
     fetchUserProfile();
   }, []);
 
   const [avatar, setAvatar] = useState("");
-  const [p_avatar, setP_avatar] = useState("");
+  const [friend_count, setFriend_count] = useState(0);
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
@@ -66,12 +126,110 @@ export default function Profile({ user_id }: Props) {
   const [course, setCourse] = useState("");
   const [uni, setUni] = useState("");
 
+  const sendRequest = async (user_id: string) => {
+    const data = await sendFriendRequestAction(user_id);
+    console.log(data);
+    if (data.success) {
+      toast({
+        title: "Friend Request Sent",
+        description: "Your friend request has been sent successfully.",
+      });
+      fetchUserProfile();
+      setFriendStatus("pending");
+      return;
+    }
+    toast({
+      title: "Error Sending Friend Request",
+      description: "An error occurred while sending your friend request.",
+      variant: "destructive",
+    });
+  };
+
+  const removeFriend = async (user_id: string) => {
+    const data = await removeFriendAction(user_id);
+    console.log(data);
+    if (data.success) {
+      toast({
+        title: "Friend Removed",
+        description: "Your friend has been removed successfully.",
+      });
+      fetchUserProfile();
+      setFriendStatus("");
+      triggerRefresh();
+      return;
+    }
+    toast({
+      title: "Error Removing Friend",
+      description: "An error occurred while removing your friend.",
+      variant: "destructive",
+    });
+  };
+
+  const cancelRequest = async (user_id: string) => {
+    const data = await cancelRequestAction(user_id);
+    console.log(data);
+    if (data.success) {
+      toast({
+        title: "Request Cancelled",
+        description: "Your friend request has been cancelled successfully.",
+      });
+      fetchUserProfile();
+      setFriendStatus("");
+      return;
+    }
+    toast({
+      title: "Error Cancelling Request",
+      description: "An error occurred while cancelling your friend request.",
+      variant: "destructive",
+    });
+  };
+
+  const rejectRequest = async (user_id: string) => {
+    const data = await rejectFriendRequestAction(user_id);
+    console.log(data);
+    if (data.success) {
+      toast({
+        title: "Request Rejected",
+        description: "Friend request has been rejected.",
+      });
+      fetchUserProfile();
+      setFriendStatus("");
+      triggerRefresh();
+      return;
+    }
+    toast({
+      title: "Error Rejecting Request",
+      description: "An error occurred while rejecting your friend request.",
+      variant: "destructive",
+    });
+  };
+
+  const acceptRequest = async (user_id: string) => {
+    const data = await acceptFriendRequestAction(user_id);
+    console.log(data);
+    if (data.success) {
+      toast({
+        title: "Request Accepted",
+        description: "Friend request has been accepted successfully.",
+      });
+      fetchUserProfile();
+      setFriendStatus("friend");
+      triggerRefresh();
+      return;
+    }
+    toast({
+      title: "Error Accepting Request",
+      description: "An error occurred while accepting your friend request.",
+      variant: "destructive",
+    });
+  };
+
   return loading ? (
     <p>Loading...</p>
   ) : (
     <>
       <div className="flex gap-6">
-        <Avatar className="w-32 h-32 flex-shrink-0">
+        <Avatar className="md:w-32 md:h-32 w-20 h-20 flex-shrink-0">
           <AvatarImage src={avatar} />
           <AvatarFallback>
             {displayName
@@ -85,16 +243,83 @@ export default function Profile({ user_id }: Props) {
           <h1 className={albert.className + " text-2xl font-semibold"}>
             {displayName}{" "}
             <TooltipProvider>
-              <Tooltip delayDuration={100}>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <UserPlus className="inline" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Add Friend</p>
-                </TooltipContent>
-              </Tooltip>
+              {friendStatus == "friend" ? (
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeFriend(user_id)}
+                    >
+                      <UserMinus className="inline" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Remove Friend</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : friendStatus == "pending" ? (
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => cancelRequest(requestId!)}
+                    >
+                      <UserCog className="inline" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Cancel Request</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : friendStatus == "incoming" ? (
+                <>
+                  <Tooltip delayDuration={100}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => acceptRequest(requestId!)}
+                      >
+                        <UserCheck className="inline" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Accept Request</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip delayDuration={100}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => rejectRequest(requestId!)}
+                      >
+                        <UserX className="inline" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Reject Request</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </>
+              ) : (
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => sendRequest(user_id)}
+                    >
+                      <UserPlus className="inline" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Add Friend</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </TooltipProvider>
           </h1>
           <hr />
@@ -102,7 +327,7 @@ export default function Profile({ user_id }: Props) {
             Studying <b>{course}</b> at <b>{uni}</b>
           </p>
           <p className="text-sm">
-            <b>{10}</b> Friends
+            <b>{friend_count}</b> Friends
           </p>
         </div>
       </div>

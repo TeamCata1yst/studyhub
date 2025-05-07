@@ -1,6 +1,7 @@
 "use client";
 import { resetPasswordAction } from "@/app/actions";
 import { FormMessage } from "@/components/form-message";
+import LoginBg from "@/components/login-bg";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,8 +16,8 @@ export default function ResetPassword() {
   const searchParams = useSearchParams();
   return (
     <main className="flex items-center lg:justify-normal justify-center min-h-screen">
-      <div className="absolute hidden md:block bottom-0 right-0 bg-[url('/loginBg.svg')] h-screen w-screen bg-right-bottom bg-no-repeat"></div>
-      <div className="bg-white rounded-md p-8 lg:ml-32 space-y-4 text-center w-[33rem] z-20">
+      <LoginBg />
+      <div className="bg-background border rounded-md p-8 lg:ml-32 space-y-4 text-center w-[33rem] z-20">
         <GraduationCap className="h-14 w-14 text-study-orange mx-auto" />
         <h1 className={"text-4xl font-semibold " + albert.className}>
           Reset password

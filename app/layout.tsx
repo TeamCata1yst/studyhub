@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 import { Toaster } from "@/components/ui/toaster";
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -21,8 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="h-screen">
-      <body className={inter.className + " bg-accent h-full text-foreground"}>
-        {children}
+      <body
+        className={inter.className + " bg-background h-full text-foreground"}
+      >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

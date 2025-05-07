@@ -10,6 +10,7 @@ import InterestInput from "./interests";
 import { LogOut, MoveRight } from "lucide-react";
 
 import { Albert_Sans } from "next/font/google";
+import { useToast } from "@/hooks/use-toast";
 const albert = Albert_Sans({ subsets: ["latin"] });
 
 type Props = {
@@ -21,7 +22,9 @@ type Props = {
   };
 };
 
-export default function ComponentName({ profile }: Props) {
+export default function Onboarding({ profile }: Props) {
+  const { toast } = useToast();
+
   const [interests, setInterests] = useState<string[]>([]);
   const nextPage = (i: number) => {
     const current_page = document.getElementById(`p${i}`);
@@ -61,7 +64,10 @@ export default function ComponentName({ profile }: Props) {
 
   const interestsSubmitAction = async (formData: FormData) => {
     if (interests.length < 3) {
-      alert("Please enter at least 3 interests");
+      toast({
+        description: "Please enter at least 3 interests",
+        variant: "destructive",
+      });
       return;
     }
     const supabase = createClient();
