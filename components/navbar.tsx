@@ -96,11 +96,11 @@ export default function Navbar({ user, onboarding }: Props) {
                 <Avatar>
                   <AvatarImage src={user.avatar_url} />
                   <AvatarFallback>
-                    {user.full_name
-                      .toUpperCase()
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                    {(user?.full_name || "Demo User")
+                    .toUpperCase()
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
                   </AvatarFallback>
                 </Avatar>
               </Link>

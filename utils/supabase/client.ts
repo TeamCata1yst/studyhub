@@ -1,7 +1,15 @@
-import { createBrowserClient } from "@supabase/ssr";
-
-export const createClient = () =>
-  createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+export function createClient() {
+  return {
+    from: () => ({
+      select: async () => ({ data: [], error: null }),
+      insert: async () => ({ data: null, error: null }),
+      update: async () => ({ data: null, error: null }),
+      delete: async () => ({ data: null, error: null })
+    }),
+    auth: {
+      getUser: async () => ({ data: null }),
+      signInWithPassword: async () => ({ data: null }),
+      signOut: async () => ({})
+    }
+  }
+}
